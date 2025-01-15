@@ -5,7 +5,7 @@
 ##
 ### KEY FEATURES:
 - This project would scour any source of videos all over the internet to do its job and fulfill its purpose. 
-- No limitation as to which player or which game the user is searching for.
+- No limitation as to which player or which game the user is searching for. The project is revolutionary.
 ##
 ### TECH STACK
 - Front end: React.js
