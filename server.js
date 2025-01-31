@@ -14,8 +14,7 @@ mongoose.connect(process.env.MONGODB_URI)
         console.log(error);
     });
 
-
-app.get("/ping",(req,res)=>{
+    app.get("/ping",(req,res)=>{
       try {
         res.json({"message":"pong"})
         
@@ -25,24 +24,30 @@ app.get("/ping",(req,res)=>{
       }
 })
 
-
-
-app.post('/create', async(req,res)=>{
-  const{username,password} = req.body;
-  payload={username,password};
-  
-  try {
-      let new_user = new UserModel(payload);
-      await new_user.save();
-      res.send({ "message": "Hurray! Successfully saved the user to the database" });
-  } catch (error) {
-      console.log(error);
-      res.send({ "error": error });
-  }
+app.get("/", async (req, res) => {
+    try {
+        const dbStatus = mongoose.connection.readyState === 1 ? "Connected" : "Not Connected";
+        res.json({ "databaseStatus": dbStatus });
+    } catch (error) {
+        console.log(error);
+        res.json({ "errorMsg": error });
+    }
 });
 
-
+app.post('/create', async(req,res)=>{
+    const{username,password} = req.body;
+    payload={username,password};
+  
+    try {
+        let new_user = new UserModel(payload);
+        await new_user.save();
+        res.send({ "message": "Hurray! Successfully saved the user to the database" });
+    } catch (error) {
+        console.log(error);
+        res.send({ "error": error });
+    }
+});
 
 app.listen(process.env.PORT,()=>{
-  console.log(`Server is running on http://localhost:${process.env.PORT} successfully`);
-})
+    console.log(`Server is running on http://localhost:${process.env.PORT} successfully`);
+});
