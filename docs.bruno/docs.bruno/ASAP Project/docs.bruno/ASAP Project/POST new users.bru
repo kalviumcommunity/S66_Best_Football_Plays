@@ -1,0 +1,18 @@
+meta {
+  name: POST new users
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8989/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "aaron",
+    "password": "aaron5"
+  }
+}

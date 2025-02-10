@@ -11,4 +11,3 @@ const videoSchema = mongoose.Schema({
 });
 
 const videoModel = mongoose.model("videocollection", videoSchema);
-
