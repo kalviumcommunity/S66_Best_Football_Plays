@@ -3,9 +3,11 @@ const app = express();
 const mongoose = require('mongoose');
 const UserModel = require('./model/user.model');
 const routes = require('./routes'); // Importing routes
+const cors=require('cors');
 require('dotenv').config();
 
 app.use(express.json());
+app.use(cors())
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {

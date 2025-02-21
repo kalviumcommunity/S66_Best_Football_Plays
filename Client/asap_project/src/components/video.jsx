@@ -1,23 +1,28 @@
+import { useEffect, useState } from "react";
+
 const Video = () => {
-  const videoData = {
-    title: "Lionel Messi Header Vs Manchester United UEFA Final",
-    description: "Messi's header in UEFA Final against Man United 2009",
-    url: "https://www.youtube.com/embed/TAOmaC5XTnE"
-  };
+  const [videoData,setVideodata]=useState({});
+
+  useEffect(()=>{
+    fetch("http://localhost:8989/videos")
+    .then((res)=>res.json())
+    .then((data)=>setVideodata(data[0]))
+    .catch(error =>console.error('Error:', error))
+  },[])
 
   return (
     <div className="video-container">
-      <h2>{videoData.title}</h2>
+    <h2>{videoData.title}</h2>
       <p>{videoData.description}</p>
       <iframe
-        width="560"
+        width="475"
         height="315"
         src={videoData.url}
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
-      ></iframe>
+      ></iframe> 
     </div>
   );
 };
