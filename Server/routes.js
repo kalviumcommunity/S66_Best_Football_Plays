@@ -1,5 +1,6 @@
 const express = require('express');
 const UserModel = require('./model/user.model');
+const { videoModel } = require('./model/video.model');
 const router = express.Router();
 
 // Create a new user
@@ -11,6 +12,16 @@ router.post('/users', async (req, res) => {
         let new_user = new UserModel(payload);
         await new_user.save();
         res.status(201).send({ "message": "User created successfully!" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ "error": error });
+    }
+});
+
+router.get('/videos', async (req, res) => {
+    try {
+        const videos = await videoModel.find();
+        res.status(200).json(videos);
     } catch (error) {
         console.log(error);
         res.status(500).send({ "error": error });
