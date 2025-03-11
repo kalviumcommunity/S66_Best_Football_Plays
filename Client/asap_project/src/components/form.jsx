@@ -1,17 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
+const Form = ({ entityToUpdate, onUpdate }) => {
+  const [title, setTitle] = useState(entityToUpdate ? entityToUpdate.title : '');
+  const [description, setDescription] = useState(entityToUpdate ? entityToUpdate.description : '');
+  const [url, setUrl] = useState(entityToUpdate ? entityToUpdate.url : '');
 
-const Form = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [url, setUrl] = useState('');
+  useEffect(() => {
+    if (entityToUpdate) {
+      setTitle(entityToUpdate.title);
+      setDescription(entityToUpdate.description);
+      setUrl(entityToUpdate.url);
+    }
+  }, [entityToUpdate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const newEntity = { title, description, url };
 
-    fetch('http://localhost:8989/entities', {
-      method: 'POST',
+    fetch(`http://localhost:8989/entities${entityToUpdate ? `/${entityToUpdate.id}` : ''}`, {
+      method: entityToUpdate ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -20,11 +29,26 @@ const Form = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log('Success:', data);
-        // Optionally, reset the form or update the list of entities
+        onUpdate(); // refresh the list in parent
       })
       .catch((error) => {
         console.error('Error:', error);
       });
+  };
+
+  const handleDelete = () => {
+    if (entityToUpdate) {
+      fetch(`http://localhost:8989/entities/${entityToUpdate.id}`, {
+        method: 'DELETE',
+      })
+        .then(() => {
+          console.log('Entity deleted');
+          onUpdate();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
   };
 
   return (
@@ -50,9 +74,25 @@ const Form = () => {
         onChange={(e) => setUrl(e.target.value)}
         required
       />
-      <button type="submit">Add Entity</button>
+      <button type="submit">{entityToUpdate ? 'Update Entity' : 'Add Entity'}</button>
+      {entityToUpdate && (
+        <button type="button" onClick={handleDelete}>
+          Delete Entity
+        </button>
+      )}
     </form>
   );
+};
+
+
+Form.propTypes = {
+  entityToUpdate: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    title: PropTypes.string,
+    description: PropTypes.string,
+    url: PropTypes.string,
+  }),
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export default Form;

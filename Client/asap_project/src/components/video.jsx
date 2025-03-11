@@ -1,30 +1,43 @@
-import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 
-const Video = () => {
-  const [videoData,setVideodata]=useState({});
-
-  useEffect(()=>{
-    fetch("http://localhost:8989/videos")
-    .then((res)=>res.json())
-    .then((data)=>setVideodata(data[0]))
-    .catch(error =>console.error('Error:', error))
-  },[])
+const Video = ({ entity, onEdit, onDelete }) => {
+  const handleDelete = () => {
+    fetch(`http://localhost:8989/entities/${entity.id}`, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        console.log('Deleted');
+        onDelete();
+      })
+      .catch((error) => console.error('Error deleting:', error));
+  };
 
   return (
-    <div className="video-container">
-    <h2>{videoData.title}</h2>
-      <p>{videoData.description}</p>
-      <iframe
-        width="475"
-        height="315"
-        src={videoData.url}
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe> 
+    <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
+      <h3>{entity.title}</h3>
+      <p>{entity.description}</p>
+      <a href={entity.url} target="_blank" rel="noopener noreferrer">
+        Watch Video
+      </a>
+      <br />
+      <button onClick={onEdit} style={{ marginRight: '0.5rem' }}>
+        Edit
+      </button>
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
+};
+
+
+Video.propTypes = {
+  entity: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+  }).isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default Video;
