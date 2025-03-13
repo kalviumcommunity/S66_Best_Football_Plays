@@ -4,12 +4,13 @@ const videoSchema = mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     url: { type: String, required: true },
-    // player: { type: String, required: true }, // Could be a reference to a user or a separate player model
-    // game: { type: String, required: true }, // Information about the match
-    // date: { type: Date, required: true },
-    // duration: { type: Number, required: true } // Duration in seconds
+    created_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users',  // Should match your User model name
+        required: true
+    }
 });
 
 const videoModel = mongoose.model("video", videoSchema);
 
-module.exports = {videoModel}
+module.exports = { videoModel };
