@@ -1,10 +1,12 @@
 const express = require('express');
 const UserModel = require('./model/user.model');
 const { videoModel } = require('./model/video.model');
+const { validateUser, validateVideo } = require('./middlewares/validators');
+
 const router = express.Router();
 
-// Create a new user
-router.post('/users', async (req, res) => {
+// Create a new user with validation
+router.post('/users', validateUser, async (req, res) => {
     const { username, password } = req.body;
     const payload = { username, password };
 
@@ -17,6 +19,7 @@ router.post('/users', async (req, res) => {
         res.status(500).send({ "error": error });
     }
 });
+
 
 router.get('/videos', async (req, res) => {
     try {
@@ -80,5 +83,21 @@ router.delete('/users/:id', async (req, res) => {
         res.status(500).send({ "error": error });
     }
 });
+
+// Example POST endpoint for videos with validation
+router.post('/videos', validateVideo, async (req, res) => {
+    const { title, description, url } = req.body;
+    const payload = { title, description, url };
+
+    try {
+        let new_video = new videoModel(payload);
+        await new_video.save();
+        res.status(201).send({ "message": "Video created successfully!" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ "error": error });
+    }
+});
+
 
 module.exports = router;
